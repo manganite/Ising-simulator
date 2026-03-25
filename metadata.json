@@ -1,0 +1,5 @@
+{
+  "name": "2D Ising Model Simulator",
+  "description": "A real-time simulation of the 2D Ising Model using the Metropolis algorithm, featuring adjustable system size, temperature, and live charts for magnetization and energy.",
+  "requestFramePermissions": []
+}
