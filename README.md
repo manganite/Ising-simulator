@@ -1,20 +1,25 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 2D Ising Model Multi-Sim
 
-# Run and deploy your AI Studio app
+A real-time simulation of the 2D Ising model comparing phase transitions at different temperatures (Below, At, and Above the Critical Temperature $T_c$).
 
-This contains everything you need to run your app locally.
+### [Live Demo](https://manganite.github.io/Ising-simulator/)
 
-View your app in AI Studio: https://ai.studio/apps/a8ef2046-fe64-4611-883c-fc352e87cc01
+## Features
+- **Triple Simulation**: Compare three independent grids running at different temperatures simultaneously.
+- **Real-time Visualization**: High-performance canvas rendering using direct pixel manipulation.
+- **Thermodynamic Stats**: Live tracking of Magnetization, Energy, Susceptibility ($\chi$), and Specific Heat ($C_v$).
+- **Interactive Controls**: Adjust grid size and pause/reset simulations.
+- **Responsive Design**: Optimized for both desktop and mobile viewing.
 
-## Run Locally
+## Tech Stack
+- **React 19** + **Vite**
+- **Tailwind CSS** for styling
+- **Recharts** for data visualization
+- **Lucide React** for iconography
+- **GitHub Actions** for automated deployment to GitHub Pages
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Running Locally
+1. Clone the repo: `git clone https://github.com/manganite/Ising-simulator.git`
+2. Install dependencies: `npm install`
+3. Start development server: `npm run dev`
+4. Build for production: `npm run build`

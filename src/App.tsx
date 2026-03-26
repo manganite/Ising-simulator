@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
   Legend
 } from 'recharts';
-import { Play, Pause, RotateCcw, Settings2, Activity, Zap } from 'lucide-react';
+import { Play, Pause, RotateCcw, Settings2, Activity, Zap, Github } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -451,8 +451,19 @@ export default function App() {
         
         {/* Header & Controls */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#141414] pb-4">
-          <div>
-            <h1 className="text-4xl font-serif italic tracking-tight">2D Ising Model Multi-Sim</h1>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-3">
+              <h1 className="text-4xl font-serif italic tracking-tight">2D Ising Model Multi-Sim</h1>
+              <a 
+                href="https://github.com/manganite/Ising-simulator" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 hover:bg-[#141414] hover:text-[#E4E3E0] rounded-full transition-all border border-[#141414]/10"
+                title="View Source on GitHub"
+              >
+                <Github size={20} />
+              </a>
+            </div>
             <p className="text-xs uppercase tracking-widest opacity-60 mt-1">Comparing Phase Transitions at Different Temperatures</p>
           </div>
           
