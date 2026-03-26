@@ -12,6 +12,7 @@ A real-time simulation of the 2D Ising model comparing phase transitions at diff
 - **Responsive Design**: Optimized for both desktop and mobile viewing.
 
 ## Tech Stack
+- **Developed with [Google AI Studio](https://ai.studio/build)** — Built, iterated, and deployed using natural language prompting.
 - **React 19** + **Vite**
 - **Tailwind CSS** for styling
 - **Recharts** for data visualization
