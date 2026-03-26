@@ -57,13 +57,15 @@ interface SimulationData {
 }
 
 // Memoized Grid Component to prevent re-renders when history changes
-const GridDisplay = memo(({ label, temp, color, canvasRef, m, e }: { 
+const GridDisplay = memo(({ label, temp, color, canvasRef, m, e, chi, cv }: { 
   label: string, 
   temp: number, 
   color: string, 
   canvasRef: React.RefObject<HTMLCanvasElement | null>, 
   m: number, 
-  e: number 
+  e: number,
+  chi: number,
+  cv: number
 }) => (
   <div className="bg-white p-4 rounded-2xl shadow-lg border border-[#141414]/5 space-y-4">
     <div className="flex items-center justify-between">
@@ -90,6 +92,14 @@ const GridDisplay = memo(({ label, temp, color, canvasRef, m, e }: {
       <div className="bg-[#E4E3E0]/50 p-2 rounded">
         <p className="opacity-50 uppercase mb-1">Energy</p>
         <p className="font-bold">{e.toFixed(3)}</p>
+      </div>
+      <div className="bg-[#E4E3E0]/50 p-2 rounded">
+        <p className="opacity-50 uppercase mb-1">χ (Susc)</p>
+        <p className="font-bold">{chi.toFixed(2)}</p>
+      </div>
+      <div className="bg-[#E4E3E0]/50 p-2 rounded">
+        <p className="opacity-50 uppercase mb-1">Cv (Heat)</p>
+        <p className="font-bold">{cv.toFixed(2)}</p>
       </div>
     </div>
   </div>
@@ -164,64 +174,6 @@ const StatsCharts = memo(({ history }: { history: SimulationData[] }) => (
           <Line name="Below Tc" type="monotone" dataKey="eLow" stroke={COLORS.LOW} strokeWidth={2} dot={false} isAnimationActive={false} />
           <Line name="At Tc" type="monotone" dataKey="eCrit" stroke={COLORS.CRIT} strokeWidth={2} dot={false} isAnimationActive={false} />
           <Line name="Above Tc" type="monotone" dataKey="eHigh" stroke={COLORS.HIGH} strokeWidth={2} dot={false} isAnimationActive={false} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-
-    {/* Susceptibility Chart */}
-    <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#141414]/5 h-[400px]">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xs font-mono uppercase tracking-widest opacity-60 flex items-center gap-2">
-          <Activity size={14} /> Susceptibility (χ)
-        </h3>
-      </div>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={history}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-          <XAxis 
-            dataKey="time" 
-            fontSize={10} 
-            tickFormatter={(v) => v.toString()} 
-            label={{ value: 'Steps', position: 'insideBottomRight', offset: -5, fontSize: 10, fontStyle: 'italic' }}
-          />
-          <YAxis fontSize={10} />
-          <Tooltip 
-            contentStyle={{ backgroundColor: '#141414', border: 'none', borderRadius: '8px', color: '#E4E3E0', fontSize: '10px' }}
-            itemStyle={{ fontSize: '10px' }}
-          />
-          <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', fontFamily: 'monospace', textTransform: 'uppercase' }} />
-          <Line name="Below Tc" type="monotone" dataKey="chiLow" stroke={COLORS.LOW} strokeWidth={2} dot={false} isAnimationActive={false} />
-          <Line name="At Tc" type="monotone" dataKey="chiCrit" stroke={COLORS.CRIT} strokeWidth={2} dot={false} isAnimationActive={false} />
-          <Line name="Above Tc" type="monotone" dataKey="chiHigh" stroke={COLORS.HIGH} strokeWidth={2} dot={false} isAnimationActive={false} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-
-    {/* Specific Heat Chart */}
-    <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#141414]/5 h-[400px]">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xs font-mono uppercase tracking-widest opacity-60 flex items-center gap-2">
-          <Zap size={14} /> Specific Heat (Cv)
-        </h3>
-      </div>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={history}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-          <XAxis 
-            dataKey="time" 
-            fontSize={10} 
-            tickFormatter={(v) => v.toString()} 
-            label={{ value: 'Steps', position: 'insideBottomRight', offset: -5, fontSize: 10, fontStyle: 'italic' }}
-          />
-          <YAxis fontSize={10} />
-          <Tooltip 
-            contentStyle={{ backgroundColor: '#141414', border: 'none', borderRadius: '8px', color: '#E4E3E0', fontSize: '10px' }}
-            itemStyle={{ fontSize: '10px' }}
-          />
-          <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', fontFamily: 'monospace', textTransform: 'uppercase' }} />
-          <Line name="Below Tc" type="monotone" dataKey="cvLow" stroke={COLORS.LOW} strokeWidth={2} dot={false} isAnimationActive={false} />
-          <Line name="At Tc" type="monotone" dataKey="cvCrit" stroke={COLORS.CRIT} strokeWidth={2} dot={false} isAnimationActive={false} />
-          <Line name="Above Tc" type="monotone" dataKey="cvHigh" stroke={COLORS.HIGH} strokeWidth={2} dot={false} isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -548,9 +500,36 @@ export default function App() {
 
         {/* Triple Grid Visualization */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <GridDisplay label="Below Tc" temp={TEMPS.LOW} color={COLORS.LOW} canvasRef={canvasRefs[0]} m={latest.mLow} e={latest.eLow} />
-          <GridDisplay label="At Tc" temp={TEMPS.CRIT} color={COLORS.CRIT} canvasRef={canvasRefs[1]} m={latest.mCrit} e={latest.eCrit} />
-          <GridDisplay label="Above Tc" temp={TEMPS.HIGH} color={COLORS.HIGH} canvasRef={canvasRefs[2]} m={latest.mHigh} e={latest.eHigh} />
+          <GridDisplay 
+            label="Below Tc" 
+            temp={TEMPS.LOW} 
+            color={COLORS.LOW} 
+            canvasRef={canvasRefs[0]} 
+            m={latest.mLow} 
+            e={latest.eLow} 
+            chi={latest.chiLow || 0} 
+            cv={latest.cvLow || 0} 
+          />
+          <GridDisplay 
+            label="At Tc" 
+            temp={TEMPS.CRIT} 
+            color={COLORS.CRIT} 
+            canvasRef={canvasRefs[1]} 
+            m={latest.mCrit} 
+            e={latest.eCrit} 
+            chi={latest.chiCrit || 0} 
+            cv={latest.cvCrit || 0} 
+          />
+          <GridDisplay 
+            label="Above Tc" 
+            temp={TEMPS.HIGH} 
+            color={COLORS.HIGH} 
+            canvasRef={canvasRefs[2]} 
+            m={latest.mHigh} 
+            e={latest.eHigh} 
+            chi={latest.chiHigh || 0} 
+            cv={latest.cvHigh || 0} 
+          />
         </div>
 
         {/* Combined Charts */}
