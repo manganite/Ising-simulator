@@ -23,14 +23,6 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface StatsAccumulator {
-  mSum: number;
-  m2Sum: number;
-  eSum: number;
-  e2Sum: number;
-  count: number;
-}
-
 // Constants
 const MAX_HISTORY = 100;
 const STEPS_PER_FRAME = 5; // Number of Monte Carlo sweeps per animation frame
@@ -198,10 +190,11 @@ export default function App() {
   
   // Simulation state (using refs for performance)
   const gridsRef = useRef<[Int8Array, Int8Array, Int8Array] | null>(null);
-  const canvasRef0 = useRef<HTMLCanvasElement>(null);
-  const canvasRef1 = useRef<HTMLCanvasElement>(null);
-  const canvasRef2 = useRef<HTMLCanvasElement>(null);
-  const canvasRefs = [canvasRef0, canvasRef1, canvasRef2];
+  const canvasRefs = [
+    useRef<HTMLCanvasElement>(null),
+    useRef<HTMLCanvasElement>(null),
+    useRef<HTMLCanvasElement>(null)
+  ];
   const requestRef = useRef<number | null>(null);
   const timeRef = useRef(0);
 
@@ -269,9 +262,10 @@ export default function App() {
     const g3 = new Int8Array(L * L);
     
     for (let i = 0; i < L * L; i++) {
-      g1[i] = Math.random() > 0.5 ? 1 : -1;
-      g2[i] = Math.random() > 0.5 ? 1 : -1;
-      g3[i] = Math.random() > 0.5 ? 1 : -1;
+      const val = Math.random() > 0.5 ? 1 : -1;
+      g1[i] = val;
+      g2[i] = val;
+      g3[i] = val;
     }
     
     gridsRef.current = [g1, g2, g3];
@@ -387,7 +381,7 @@ export default function App() {
       const eHigh = energiesRef.current[2] / area;
 
       // Update stats
-      const updateStats = (s: StatsAccumulator, m: number, e: number) => {
+      const updateStats = (s: any, m: number, e: number) => {
         s.mSum += m;
         s.m2Sum += m * m;
         s.eSum += e;
@@ -400,7 +394,7 @@ export default function App() {
       updateStats(stats.high, mHigh, eHigh);
 
       // Calculate Chi and Cv
-      const getChiCv = (s: StatsAccumulator, T: number) => {
+      const getChiCv = (s: any, T: number) => {
         const n = s.count;
         const varM = (s.m2Sum / n) - (s.mSum / n) ** 2;
         const varE = (s.e2Sum / n) - (s.eSum / n) ** 2;
@@ -449,7 +443,7 @@ export default function App() {
     initGrids(size);
   }, [size, initGrids]);
 
-  const latest = history[history.length - 1] || { mLow: 0, mCrit: 0, mHigh: 0, eLow: 0, eCrit: 0, eHigh: 0, chiLow: 0, chiCrit: 0, chiHigh: 0, cvLow: 0, cvCrit: 0, cvHigh: 0 };
+  const latest = history[history.length - 1] || { mLow: 0, mCrit: 0, mHigh: 0, eLow: 0, eCrit: 0, eHigh: 0 };
 
   return (
     <div className="min-h-screen bg-[#E4E3E0] text-[#141414] font-sans p-4 md:p-6">
@@ -524,28 +518,28 @@ export default function App() {
             canvasRef={canvasRefs[0]} 
             m={latest.mLow} 
             e={latest.eLow} 
-            chi={latest.chiLow}
-            cv={latest.cvLow}
+            chi={latest.chiLow || 0} 
+            cv={latest.cvLow || 0} 
           />
-          <GridDisplay
-            label="At Tc"
-            temp={TEMPS.CRIT}
-            color={COLORS.CRIT}
-            canvasRef={canvasRefs[1]}
-            m={latest.mCrit}
-            e={latest.eCrit}
-            chi={latest.chiCrit}
-            cv={latest.cvCrit}
+          <GridDisplay 
+            label="At Tc" 
+            temp={TEMPS.CRIT} 
+            color={COLORS.CRIT} 
+            canvasRef={canvasRefs[1]} 
+            m={latest.mCrit} 
+            e={latest.eCrit} 
+            chi={latest.chiCrit || 0} 
+            cv={latest.cvCrit || 0} 
           />
-          <GridDisplay
-            label="Above Tc"
-            temp={TEMPS.HIGH}
-            color={COLORS.HIGH}
-            canvasRef={canvasRefs[2]}
-            m={latest.mHigh}
-            e={latest.eHigh}
-            chi={latest.chiHigh}
-            cv={latest.cvHigh}
+          <GridDisplay 
+            label="Above Tc" 
+            temp={TEMPS.HIGH} 
+            color={COLORS.HIGH} 
+            canvasRef={canvasRefs[2]} 
+            m={latest.mHigh} 
+            e={latest.eHigh} 
+            chi={latest.chiHigh || 0} 
+            cv={latest.cvHigh || 0} 
           />
         </div>
 
